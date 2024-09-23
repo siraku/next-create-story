@@ -11,8 +11,8 @@ import {
 } from "@nextui-org/navbar";
 import Image from "next/image";
 import Link from "next/link";
-import { m } from "framer-motion";
 import { Button } from "@nextui-org/button";
+import { UserButton, useUser } from "@clerk/nextjs";
 
 function Header() {
   const menuList = [
@@ -34,6 +34,7 @@ function Header() {
     },
   ];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isSignedIn } = useUser();
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen}>
@@ -58,7 +59,12 @@ function Header() {
         ))}
       </NavbarContent>
       <NavbarContent justify="end">
-        <Button color="primary"> Get Start</Button>
+        <Link href={"/dashboard"}>
+          <Button color="primary">
+            {isSignedIn ? "DashBoard" : "Get Start"}{" "}
+          </Button>
+        </Link>
+        <UserButton />
       </NavbarContent>
       <NavbarMenu>
         {menuList.map((menu, index) => (
