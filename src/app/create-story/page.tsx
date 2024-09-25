@@ -1,5 +1,6 @@
 "use client";
 import StroyInput from "@/components/create-story/storyInput";
+import { chatSession, PROMPT_TEMPLATE } from "@/config/GeminiAi";
 import React, { useEffect, useState } from "react";
 
 export interface fieldDate {
@@ -30,12 +31,29 @@ function CreateStory() {
     console.log(formData);
   }, [formData]);
 
+  const aiGenerateStory = async () => {
+    const finalPrompt = PROMPT_TEMPLATE.replace("{ageGroup}", formData.ageGroup)
+      .replace("{story type}", formData.storyType)
+      .replace("{story subject}", formData.storySubject);
+
+    try {
+      // console.log(finalPrompt);
+      const result = await chatSession.sendMessage(finalPrompt);
+      console.log(result.response.text());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-4xl font-bold flex justify-center pt-5">
         Create your story
       </h1>
-      <StroyInput userSelection={onHandleUserSelection} />
+      <StroyInput
+        userSelection={onHandleUserSelection}
+        aiGenerateStory={aiGenerateStory}
+      />
     </div>
   );
 }
