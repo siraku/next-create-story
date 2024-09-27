@@ -1,7 +1,10 @@
 "use client";
 import StroyInput from "@/components/create-story/storyInput";
+import { db } from "@/config/db";
 import { chatSession, PROMPT_TEMPLATE } from "@/config/GeminiAi";
+import { StoryData } from "@/config/schema";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export interface fieldDate {
   fieldName: string;
@@ -40,9 +43,22 @@ function CreateStory() {
       // console.log(finalPrompt);
       const result = await chatSession.sendMessage(finalPrompt);
       console.log(result.response.text());
+      saveInDB(result.response.text());
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const saveInDB = async (storyContent: string) => {
+    const recordId = uuidv4();
+    console.log("UUID:" + recordId);
+    const result = await db.insert(StoryData).values({
+      id: recordId,
+      storySubject: formData.storySubject,
+      storyType: formData.storyType,
+      ageGroup: formData.ageGroup,
+      storyContent: JSON.parse(storyContent),
+    });
   };
 
   return (
